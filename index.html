@@ -25,7 +25,7 @@ then coupled comonotonically.</p>
 </div>
 <p class="small"><span style="color:#a0462a">Lower: Q₂ threshold test.</span>
 <span style="color:#225a88">Upper: the paper's bound.</span>
-The shaded gap is not an estimated TV curve. Earlier times were checked separately.</p>
+The shaded gap is not an estimated TV curve. </p>
 <p class="small" id="details"></p>
 <p><a href="cutoff.py">cutoff.py</a> · <a href="https://doi.org/10.1007/s10955-026-03640-z">paper</a></p>
 <pre>pip install numpy scipy
@@ -49,7 +49,8 @@ The integral below is then an exact O(n) sweep per genome, with no n × n
 covariance matrix.</li>
 <li>Small batches: eight genomes at a time keep working memory O(n).
 The same equilibrium samples are reused across times; thresholds are chosen
-on separate training samples.</li>
+on separate training samples, and validation counts use Bonferroni-corrected
+exact binomial (Beta) tail bounds.</li>
 <li>No simulation for the upper curve: evaluate the paper's bound directly.
 Only integer times through log₂ n + 3 are sampled for the lower curve;
 later lower bounds are set to zero.</li>
