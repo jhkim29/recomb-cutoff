@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recombination cutoff</title>
+<style>
+body { max-width: 1000px; margin: 40px auto; padding: 0 20px; font: 17px/1.5 Georgia, serif; color: #222; }
+h1 { font-size: 28px; font-weight: normal; margin-bottom: 6px; }
+a { color: #225a88; }
+.plots { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 24px 0 8px; }
+svg { width: 100%; height: auto; font: 12px system-ui, sans-serif; }
+.small { font-size: 14px; color: #555; }
+pre { font-size: 14px; line-height: 1.7; }
+li { margin: 8px 0; }
+.formula { overflow-x: auto; }
+@media (max-width: 700px) { body { margin: 24px auto; } .plots { grid-template-columns: 1fr; } }
+</style>
+<h1>Recombination cutoff</h1>
+<p id="size"></p>
+<p>Marginals are drawn once, independently and uniformly subject to pᵢ(a) ≥ δ = 0.08,
+then coupled comonotonically.</p>
+<div class="plots">
+<svg id="whole" viewBox="0 0 480 310" role="img" aria-label="TV bounds over the full time range"></svg>
+<svg id="window" viewBox="0 0 480 310" role="img" aria-label="The same TV bounds near log base 2 n"></svg>
+</div>
+<p class="small"><span style="color:#a0462a">Lower: Q₂ threshold test.</span>
+<span style="color:#225a88">Upper: the paper's bound.</span>
+The shaded gap is not an estimated TV curve. Earlier times were checked separately.</p>
+<p class="small" id="details"></p>
+<p><a href="cutoff.py">cutoff.py</a> · <a href="https://doi.org/10.1007/s10955-026-03640-z">paper</a></p>
+<pre>pip install numpy scipy
+python cutoff.py</pre>
+<p class="small">This saves or reuses marginals.npy and updates this page.
+Q₂ is evaluated using the orthonormal expansion's quadratic kernel.
+The displayed example illustrates the cutoff theorem at one finite n.</p>
+<ul>
+<li>Easy exact sampling: a comonotonic ancestor needs just one uniform U, with
+Xᵢ = Fᵢ⁻¹(U). At generation t, each site independently picks one of 2ᵗ ancestor
+labels; sites with the same label share U. This costs O(n + 2ᵗ) near the window.
+For 2ᵗ &gt; 4n, only occupied labels are generated, using O(n log n) work.</li>
+<li>Fast Q₂: sort the 3n marginal CDF breakpoints once, in O(n log n).
+The integral below is then an exact O(n) sweep per genome, with no n × n
+covariance matrix.</li>
+<li>Small batches: eight genomes at a time keep working memory O(n).
+The same equilibrium samples are reused across times; thresholds are chosen
+on separate training samples.</li>
+<li>No simulation for the upper curve: evaluate the paper's bound directly.
+Only integer times through log₂ n + 3 are sampled for the lower curve;
+later lower bounds are set to zero.</li>
+</ul>
+<details>
+<summary>The integral identity (short proof)</summary>
+<p>For a fixed genome x, put gᵢ(u) = 1{Fᵢ⁻¹(u) = xᵢ}/pᵢ(xᵢ) − 1.
+The code evaluates B = 2ᵗQ₂,ₜ; this positive rescaling only changes the threshold.</p>
+<pre class="formula">B(x) = ½ [ ∫₀¹ (Σᵢ gᵢ(u))² du − Σᵢ (1/pᵢ(xᵢ) − 1) ].</pre>
+<p>For the site's nonconstant orthonormal functions, completeness gives
+Σₖ₌₁³ fᵢₖ(a)fᵢₖ(b) = 1{a = b}/pᵢ(a) − 1.
+Substituting this into the quadratic expansion gives
+B(x) = Σᵢ&lt;ⱼ ∫₀¹ gᵢ(u)gⱼ(u) du.
+Expand the square and use ∫₀¹ gᵢ(u)² du = 1/pᵢ(xᵢ) − 1.
+Each gᵢ is a step function, so the integral is a finite weighted sum over
+the sorted breakpoints, without numerical quadrature.</p>
+</details>
+<script id="data" type="application/json">
+{"n": 262144, "seed": 20261018, "train": 128, "samples": 2048, "alpha": 0.01, "left": 10, "rows": [
+[0, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[1, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[2, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[3, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[4, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[5, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[6, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[7, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[8, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[9, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[10, 0.9747052506982934, 1.0, 719353.4676121986, 2048, 22],
+[11, 0.972474252250956, 1.0, 719353.4676121986, 2046, 22],
+[12, 0.9539989052943915, 1.0, 594655.9124136451, 2039, 42],
+[13, 0.9138675021151538, 1.0, 594655.9124136451, 1975, 42],
+[14, 0.8213129100381988, 1.0, 422945.7494875379, 1883, 113],
+[15, 0.6890495199902911, 1.0, 272320.4409561706, 1741, 217],
+[16, 0.5059934982678143, 0.9999999999811243, 273944.09237769415, 1379, 214],
+[17, 0.31673374249416886, 0.9999969278938233, 198910.8705680929, 1118, 328],
+[18, 0.14396368222079864, 0.9987606239116669, 231632.2179288559, 703, 276],
+[19, 0.017729738096436687, 0.9751064658160681, 5530.048479621939, 1018, 823],
+[20, 0.0026874668282319547, 0.75, 231632.2179288559, 400, 276],
+[21, 0.0, 0.375, 273944.09237769415, 269, 214]
+]}
+</script>
+<script>
+const data = JSON.parse(document.getElementById('data').textContent);
+const center = Math.log2(data.n), end = Math.ceil(2 * center);
+const lower = Array(end + 1).fill(0);
+data.rows.forEach(r => lower[r[0]] = r[1]);
+const plateau = Math.min(...data.rows.filter(r => r[0] <= data.left).map(r => r[1]));
+for (let t = 0; t <= data.left; t++) lower[t] = plateau;
+function upper(t) {
+  const s = data.n * 2 ** -t;
+  return Math.min(1, 3 * s, s >= Math.log(2) / 6 ? 1 - .5 * Math.exp(-6 * s) : 1);
+}
+document.getElementById('size').textContent = `${data.n.toLocaleString('en-US')} sites, A/T/C/G. log₂ n = ${center}.`;
+document.getElementById('details').textContent = `${100 * (1 - data.alpha)}% simultaneous lower confidence bounds; ${data.train} training + ${data.samples.toLocaleString('en-US')} validation samples per law at each tested time. Integer generations.`;
+function plot(id, lo, hi, step, offset) {
+  const svg = document.getElementById(id), ns = 'http://www.w3.org/2000/svg';
+  const x = t => 46 + 422 * (t - lo) / (hi - lo), y = v => 258 - 214 * v;
+  function add(tag, attrs, text) {
+    const e = document.createElementNS(ns, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (text !== undefined) e.textContent = text;
+    svg.append(e);
+  }
+  function points(f) {
+    const p = [];
+    for (let t = lo; t < hi; t++) p.push([x(t), y(f(t))], [x(t + 1), y(f(t))]);
+    p.push([x(hi), y(f(hi))]);
+    return p;
+  }
+  add('text', {x: 240, y: 20, 'text-anchor': 'middle', 'font-size': 15}, offset ? 'Near log₂ n' : 'Full range');
+  for (let v = 0; v <= 1.01; v += .2) {
+    add('line', {x1: 46, y1: y(v), x2: 468, y2: y(v), stroke: '#eee'});
+    add('text', {x: 38, y: y(v) + 4, 'text-anchor': 'end'}, v.toFixed(1));
+  }
+  const a = points(upper), b = points(t => lower[t] || 0);
+  add('polygon', {points: a.concat([...b].reverse()).map(p => p.join(',')).join(' '), fill: '#e4edf3'});
+  for (const [p, color] of [[a, '#225a88'], [b, '#a0462a']])
+    add('polyline', {points: p.map(v => v.join(',')).join(' '), fill: 'none', stroke: color, 'stroke-width': 1.8});
+  add('line', {x1: x(center), x2: x(center), y1: 38, y2: 258, stroke: '#999', 'stroke-dasharray': '3 4'});
+  add('path', {d: 'M46 38 V258 H468', fill: 'none', stroke: '#555'});
+  for (let t = lo; t <= hi; t += step) {
+    const label = offset ? (t > center ? '+' : '') + (t - center) : t;
+    add('text', {x: x(t), y: 278, 'text-anchor': 'middle'}, label);
+  }
+  add('text', {x: 250, y: 303, 'text-anchor': 'middle'}, offset ? 't − log₂ n' : 'Generation t');
+  add('text', {transform: 'translate(12 150) rotate(-90)', 'text-anchor': 'middle'}, 'TV distance');
+}
+plot('whole', 0, end, 6, false);
+plot('window', Math.max(0, Math.floor(center) - 8), Math.floor(center) + 8, 2, true);
+</script>
+</html>
