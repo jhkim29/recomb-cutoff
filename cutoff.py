@@ -92,7 +92,7 @@ def main():
         if p.shape != (n, 4):
             raise ValueError('marginals.npy has a different n')
     else:
-        p = delta + (1-4*delta)*np.random.default_rng(seed).dirichlet(np.ones(4), size=n)
+        p = delta + (1-4*delta)*np.random.default_rng(seed).dirichlet(np.ones(4), size=n) # q2 uses the completeness identity sum_{m>=1} f_m(s)f_m(s') = delta_{s,s'}/p(s) - 1
         np.save(path, p)
     f = orthonormalize(p)
     np.testing.assert_allclose(np.einsum('ims,ins,is->imn', f, f, p),
