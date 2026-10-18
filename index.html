@@ -38,6 +38,12 @@ The displayed example illustrates the cutoff theorem at one finite n.</p>
 Xᵢ = Fᵢ⁻¹(U). At generation t, each site independently picks one of 2ᵗ ancestor
 labels; sites with the same label share U. This costs O(n + 2ᵗ) near the window.
 For 2ᵗ &gt; 4n, only occupied labels are generated, using O(n log n) work.</li>
+<li>Why comonotonic: proving cutoff—a drop in TV distance from near 1 to near 0
+within a window narrow relative to the mixing time—also requires identifying
+sufficiently unmixed initial laws. The paper justifies comonotonic coupling for
+this role through a uniform positive-correlation bound under the δ condition
+(Lemma 3.6). Here it gives a strongly unmixed starting law, easy sampling, and
+efficient Q₂ computation.</li>
 <li>Fast Q₂: sort the 3n marginal CDF breakpoints once, in O(n log n).
 The integral below is then an exact O(n) sweep per genome, with no n × n
 covariance matrix.</li>
